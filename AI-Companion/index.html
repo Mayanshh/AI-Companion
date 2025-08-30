@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Companion — Natasha</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js"></script>
+  <style>
+    /* hidden audio controls (we use blob-playback) */
+    #audio { display: none; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-black text-gray-100 font-inter flex items-center justify-center p-6">
+  <div class="w-full max-w-3xl bg-white/3 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
+    <!-- header -->
+    <header class="flex items-center justify-between px-6 py-4 border-b border-white/6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-pink-500 grid place-items-center font-semibold">N</div>
+        <div>
+          <h1 class="text-lg font-semibold">Natasha — AI Companion</h1>
+          <p class="text-xs text-gray-300">Your Virtual AI Companion <br />(Girlfriend / Boyfriend)</p>
+        </div>
+      </div>
+      
+    </header>
+
+    <!-- setup -->
+    <main id="setup" class="p-6 grid gap-4">
+      <div>
+        <label class="block text-xs text-gray-300 mb-1">Your name</label>
+        <input id="userName" class="w-full rounded-md px-3 py-2 bg-white/5 outline-none focus:ring-2 focus:ring-pink-500" placeholder="e.g. Max" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">Companion</label>
+          <select id="persona" class="w-full rounded-md px-3 py-2 bg-white/5">
+            <option value="girlfriend">Girlfriend</option>
+            <option value="boyfriend">Boyfriend</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">ElevenLabs voice (optional)</label>
+          <select id="voiceSelect" class="w-full rounded-md px-3 py-2 bg-white/5">
+            <!-- sample public IDs — replace with your own in production -->
+            <option value="21m00Tcm4TlvDq8ikWAM">Rachel (female)</option>
+            <option value="TxGEqnHWrfWFTfGW9XjX">Antoni (male)</option>
+            <option value="AZnzlk1XvdvUeBnXmlld">Domi</option>
+            <option value="custom">Custom voice_id…</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="customVoiceRow" class="hidden">
+        <label class="block text-xs text-gray-300 mb-1">Custom voice ID</label>
+        <input id="customVoiceId" class="w-full rounded-md px-3 py-2 bg-white/5" placeholder="paste ElevenLabs voice_id" />
+      </div>
+
+      <div>
+        <label class="block text-xs text-gray-300 mb-1">How should they act? (optional)</label>
+        <textarea id="customInstructions" rows="3" class="w-full rounded-md px-3 py-2 bg-white/5" placeholder="caring, playful, supportive, short replies..."></textarea>
+      </div>
+
+      <div class="flex items-center justify-between gap-4">
+        <small class="text-xs text-gray-400">Please use this AI voice companion responsibly. This service is for <b>
+          personal and creative use only
+        </b> — avoid sharing sensitive information.</small>
+        <button id="startBtn" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded-md font-medium">Start</button>
+      </div>
+    </main>
+
+    <!-- chat -->
+    <section id="chat" class="hidden p-4 space-y-3">
+      <div id="messages" class="h-80 overflow-y-auto p-3 space-y-3 bg-black/20 rounded-md"></div>
+
+      <div class="flex items-center gap-3">
+        <button id="micBtn" class="flex items-center gap-2 flex-1 px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-700">
+          <!-- mic icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1H3v1a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-1h-2z"/></svg>
+          <span id="micLabel">Talk</span>
+          <span id="recordDot" class="ml-2 w-2 h-2 rounded-full bg-red-500 hidden animate-pulse"></span>
+        </button>
+
+        <button id="stopBtn" class="px-3 py-2 rounded-md bg-white/5 hover:bg-white/10">
+          <!-- stop icon -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+        </button>
+      </div>
+
+      <div id="status" class="text-xs text-gray-400 text-center pt-2">Ready</div>
+    </section>
+
+    <audio id="audio" preload="auto"></audio>
+  </div>
+
+ 
+  <!-- FontAwesome for GitHub Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <footer class="fixed bottom-0 left-0 right-0 bg-gray-900 text-gray-400 border-t border-gray-700 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex flex-col sm:flex-row items-center justify-between text-xs">
+
+      <!-- Left Side -->
+      <div class="flex items-center space-x-2">
+        <p>© 2025 <span class="text-white font-medium">Mayansh Bangali</span></p>
+        <span class="hidden sm:inline">•</span>
+        <p class="hidden sm:inline">All rights reserved</p>
+      </div>
+
+      <!-- Right Side -->
+      <div class="flex items-center space-x-4 mt-1 sm:mt-0">
+        <a href="https://github.com/Mayanshh" target="_blank" rel="noopener noreferrer" 
+           class="hover:text-white transition-colors flex items-center space-x-1">
+          <i class="fab fa-github text-lg"></i>
+          <span>GitHub</span>
+        </a>
+        <p class="text-gray-500">Developed with ❤️ by <span class="text-white">Mayansh</span></p>
+      </div>
+
+    </div>
+  </footer>
+
+
+
+
+  <script defer src="script.js"></script>
+</body>
+</html>
